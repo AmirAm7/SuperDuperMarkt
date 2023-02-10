@@ -17,7 +17,6 @@ public class PriceCalculate {
 		return Math.round(dailyRate * 100.0) / 100.0;
 	}
 
-
 	public int getExpiryDays(LocalDate expiryDate, LocalDate importDate) {
 		double countMonth = Period.between(importDate, expiryDate).getMonths();
 		double countDays = Period.between(importDate, expiryDate).getDays();

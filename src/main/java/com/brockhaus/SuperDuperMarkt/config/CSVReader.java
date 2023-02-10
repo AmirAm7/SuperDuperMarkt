@@ -31,9 +31,12 @@ public class CSVReader {
 				Product newProduct = new Product();
 				newProduct.setDesignation(strArray[0]);
 				newProduct.setBasicPrice(Double.parseDouble(strArray[1]));
-				newProduct.setImportDate(LocalDate.parse(strArray[2]));
-				newProduct.setExpiryDate(LocalDate.parse(strArray[3]));
-				newProduct.setQuality(0);
+				newProduct.setExpiryDate(LocalDate.parse(strArray[2]));
+				newProduct.setImportDate(LocalDate.parse(strArray[3]));
+				newProduct.setQuality(Integer.parseInt(strArray[4]));
+				newProduct.setMustDisposed(Boolean.parseBoolean(strArray[5]));
+				newProduct.setPricePeriod(Integer.parseInt(strArray[6]));
+				newProduct.setCount(Integer.parseInt(strArray[7]));
 				productRepository.save(newProduct);
 				log.info("Product saved");
 			}

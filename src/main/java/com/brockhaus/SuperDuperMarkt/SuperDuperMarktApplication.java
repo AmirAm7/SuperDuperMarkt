@@ -9,7 +9,6 @@ import java.io.IOException;
 public class SuperDuperMarktApplication {
 
 	public static void main(String[] args) throws IOException {
-
 		SpringApplication.run(SuperDuperMarktApplication.class, args);
 	}
 

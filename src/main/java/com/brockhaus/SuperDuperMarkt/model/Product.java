@@ -16,35 +16,37 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 public class Product {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
-	@Column(columnDefinition = "varchar(255)")
+	@Column(name = "designation")
 	private String designation;
 	@NotNull
-	@Column(name = "expiry_date", columnDefinition = "date")
+	@Column(name = "expiry_date")
 	private LocalDate expiryDate;
 	@NotNull
-	@Column(name="import_date", columnDefinition = "date default now()")
+	@Column(name="import_date")
 	private LocalDate importDate;
 	@NotNull
-	@Column(name = "basic_price", columnDefinition = "double precision")
+	@Column(name = "basic_price")
 	private double basicPrice;
 	@NotNull
-	@Column(name = "quality", columnDefinition = "number")
+	@Column(name = "quality")
 	private int quality;
 	@NotNull
-	@Column(name = "must_disposed" , columnDefinition = "boolean default false")
+	@Column(name = "must_disposed")
 	private boolean mustDisposed;
 	@Column(name = "count")
 	private long count;
 	@Column(name = "pricePeriod")
 	private int pricePeriod;
+	/*
 	@Column(name = "decrease")
 	private boolean decrease;
 	@Column(name = "increase")
 	private boolean increase;
+	 */
 }

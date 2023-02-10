@@ -1,5 +1,6 @@
 package com.brockhaus.SuperDuperMarkt.service;
 
+import com.brockhaus.SuperDuperMarkt.mapper.ProductMapper;
 import com.brockhaus.SuperDuperMarkt.model.DTO.ProductResponse;
 import com.brockhaus.SuperDuperMarkt.model.DailyPriceId;
 import com.brockhaus.SuperDuperMarkt.model.Product;
@@ -21,20 +22,22 @@ public class ProductServiceImp implements IProductService {
 	private final PriceCalculate priceCalculate;
 	private final ProductRepository productRepository;
 
+	private final ProductMapper productMapper;
 	private final DailyPriceIdRepository dailyPriceIdRepository;
 
 	@Autowired
-	public ProductServiceImp(PriceCalculate priceCalculate, ProductRepository productRepository, DailyPriceIdRepository dailyPriceIdRepository) {
+	public ProductServiceImp(PriceCalculate priceCalculate, ProductRepository productRepository, ProductMapper productMapper, DailyPriceIdRepository dailyPriceIdRepository) {
 		this.priceCalculate = priceCalculate;
 		this.productRepository = productRepository;
+		this.productMapper = productMapper;
 		this.dailyPriceIdRepository = dailyPriceIdRepository;
 	}
 
 
-	public List<ProductResponse> listOfProductResponse (LocalDate asExpiryDate, LocalDate toExpiryDate){
-		List<ProductResponse> productResponseList = new ArrayList<>();
+	public List<ProductResponse> listOfProductResponseByDate (LocalDate asExpiryDate, LocalDate toExpiryDate){
+		//List<ProductResponse> productResponseList = new ArrayList<>();
 		List <Product> products = productRepository.getProductsByExpiryDates(asExpiryDate, toExpiryDate);
-		for (Product p: products
+	/*	for (Product p: products
 			 ) {
 			ProductResponse newProduct = new ProductResponse();
 			int day = priceCalculate.getExpiryDays(p.getExpiryDate(),p.getImportDate());
@@ -48,9 +51,9 @@ public class ProductServiceImp implements IProductService {
 			newProduct.setRestDays(day);
 			productResponseList.add(newProduct);
 		}
-		return productResponseList;
+	 */
+		return productMapper.convertToListOfProductResponse(products);
 	} // TODO: TEST - CSV - Design P -
-
 
 	@Override
 	public List<Product> findAllProducts() {
@@ -60,7 +63,6 @@ public class ProductServiceImp implements IProductService {
 	@PostConstruct
 	public List<DailyPriceId> getDailyPriceByProductId() {
 		List<Product> products = productRepository.findAll();
-
 		for (Product product : products) {
 			for (int i = priceCalculate.getExpiryDays(product.getImportDate(), product.getExpiryDate()); i > 0; i--) {
 				DailyPriceId dailyPriceId = new DailyPriceId();
@@ -72,5 +74,4 @@ public class ProductServiceImp implements IProductService {
 		}
 		return dailyPriceIdRepository.findAll();
 	}
-
 }
