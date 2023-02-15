@@ -1,10 +1,13 @@
-package com.brockhaus.SuperDuperMarkt.config;
+package com.brockhaus.superDuperMarkt.config;
 
-import com.brockhaus.SuperDuperMarkt.model.Product;
-import com.brockhaus.SuperDuperMarkt.repo.ProductRepository;
+import com.brockhaus.superDuperMarkt.repo.ProductRepository;
+import com.brockhaus.superDuperMarkt.model.Cheese;
+import com.brockhaus.superDuperMarkt.model.Wine;
+import com.brockhaus.superDuperMarkt.service.ProductServiceImp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -15,12 +18,16 @@ import java.time.LocalDate;
 @Slf4j
 @Service
 public class CSVReader {
+
 	private final ProductRepository productRepository;
+
 	@Autowired
 	public CSVReader(ProductRepository productRepository) {
 		this.productRepository = productRepository;
+
 	}
-	String line="";
+
+	String line = "";
 
 	@PostConstruct
 	public void saveProductsDataFromCSVDatasetInToDB() throws IOException {
@@ -28,16 +35,23 @@ public class CSVReader {
 			BufferedReader br = new BufferedReader(new FileReader("products.csv"));
 			while ((line = br.readLine()) != null) {
 				String[] strArray = line.split(";");
-				Product newProduct = new Product();
-				newProduct.setDesignation(strArray[0]);
-				newProduct.setBasicPrice(Double.parseDouble(strArray[1]));
-				newProduct.setExpiryDate(LocalDate.parse(strArray[2]));
-				newProduct.setImportDate(LocalDate.parse(strArray[3]));
-				newProduct.setQuality(Integer.parseInt(strArray[4]));
-				newProduct.setMustDisposed(Boolean.parseBoolean(strArray[5]));
-				newProduct.setPricePeriod(Integer.parseInt(strArray[6]));
-				newProduct.setCount(Integer.parseInt(strArray[7]));
-				productRepository.save(newProduct);
+
+				if (strArray[0].equalsIgnoreCase("Cheese")) {
+					Cheese newProduct = new Cheese(strArray[0],
+							Double.parseDouble(strArray[1]),
+							Integer.parseInt(strArray[2]),
+							LocalDate.parse(strArray[3]),
+							LocalDate.parse(strArray[4]));
+					productRepository.save(newProduct);
+				} else if (strArray[0].equalsIgnoreCase("Wine")) {
+					Wine newProduct = new Wine(strArray[0],
+							Double.parseDouble(strArray[1]),
+							Integer.parseInt(strArray[2]),
+							LocalDate.parse(strArray[3]),
+							LocalDate.parse(strArray[4]));
+					productRepository.save(newProduct);
+				}
+
 				log.info("Product saved");
 			}
 		} catch (FileNotFoundException e) {
