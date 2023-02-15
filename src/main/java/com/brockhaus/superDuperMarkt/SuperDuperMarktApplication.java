@@ -1,4 +1,4 @@
-package com.brockhaus.SuperDuperMarkt;
+package com.brockhaus.superDuperMarkt;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,5 +11,4 @@ public class SuperDuperMarktApplication {
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(SuperDuperMarktApplication.class, args);
 	}
-
 }

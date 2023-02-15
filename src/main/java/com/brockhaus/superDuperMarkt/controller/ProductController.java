@@ -1,11 +1,10 @@
-package com.brockhaus.SuperDuperMarkt.controller;
+package com.brockhaus.superDuperMarkt.controller;
 
 
-import com.brockhaus.SuperDuperMarkt.mapper.ProductMapper;
-import com.brockhaus.SuperDuperMarkt.model.DTO.ProductResponse;
-import com.brockhaus.SuperDuperMarkt.model.Product;
-import com.brockhaus.SuperDuperMarkt.repo.ProductRepository;
-import com.brockhaus.SuperDuperMarkt.service.ProductServiceImp;
+import com.brockhaus.superDuperMarkt.mapper.ProductMapper;
+import com.brockhaus.superDuperMarkt.model.DTO.ProductResponse;
+import com.brockhaus.superDuperMarkt.model.Product;
+import com.brockhaus.superDuperMarkt.service.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +19,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/api/products")
 public class ProductController {
-	private final ProductRepository productRepository;
 	private final ProductMapper productMapper;
 	private final ProductServiceImp productService;
 	@Autowired
-	public ProductController(ProductRepository productRepository, ProductMapper productMapper, ProductServiceImp productService) {
-		this.productRepository = productRepository;
+	public ProductController( ProductMapper productMapper, ProductServiceImp productService) {
 		this.productMapper = productMapper;
 		this.productService = productService;
 	}
@@ -36,10 +33,21 @@ public class ProductController {
 		return new ResponseEntity<>(products, HttpStatus.FOUND);
 	}
 
-	@GetMapping("/productsByDate")
-	ResponseEntity <List<ProductResponse>> getProductsByExpiryDate(@RequestParam (value = "expiryDate") LocalDate expiryDate,
-																   @RequestParam (value = "importDate") LocalDate importDate){ //@Param
-		List<ProductResponse> products = productService.listOfProductResponseByDate(expiryDate,importDate);
+	@GetMapping("/productsForNextWeek")
+	ResponseEntity <List <List<ProductResponse>>> getProductsForNextWeek(){
+		List <List<ProductResponse>> products = productService.findAllProductsForNextWeek();
+		return new ResponseEntity<>(products, HttpStatus.FOUND);
+	}
+
+	@GetMapping("/allInDB")
+	ResponseEntity <List<Product>> getAllProductsInDB(){
+		List<Product> products = productService.findAllProductsInDB();
+		return new ResponseEntity<>(products, HttpStatus.FOUND);
+	}
+
+	@GetMapping("/expiryProducts")
+	ResponseEntity <List <ProductResponse>> getExpiredProducts(){
+		List<ProductResponse> products = productService.getExpiredProduct();
 		return new ResponseEntity<>(products, HttpStatus.FOUND);
 	}
 }

@@ -1,4 +1,4 @@
-package com.brockhaus.SuperDuperMarkt;
+package com.brockhaus.superDuperMarkt;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
