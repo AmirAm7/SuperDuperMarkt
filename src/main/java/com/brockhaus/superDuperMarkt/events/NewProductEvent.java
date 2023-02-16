@@ -1,20 +1,20 @@
 package com.brockhaus.superDuperMarkt.events;
 
-import com.brockhaus.superDuperMarkt.model.Product;
+import com.brockhaus.superDuperMarkt.model.DTO.ProductResponse;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.List;
 
 public class NewProductEvent extends ApplicationEvent {
 
-    private List<Product> productList;
+	private List<ProductResponse> productList;
 
-    public NewProductEvent(Object source, List<Product> productList) {
-        super(source);
-        this.productList = productList;
-    }
+	public NewProductEvent(Object source, List<ProductResponse> productList) {
+		super(source);
+		this.productList = productList;
+	}
 
-    public List<Product> getProductList() {
-        return productList;
-    }
+	public List<ProductResponse> getProductList() {
+		return productList;
+	}
 }

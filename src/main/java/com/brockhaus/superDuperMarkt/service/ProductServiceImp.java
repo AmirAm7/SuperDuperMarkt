@@ -1,4 +1,6 @@
 package com.brockhaus.superDuperMarkt.service;
+
+import com.brockhaus.superDuperMarkt.model.DTO.ProductReportDTO;
 import com.brockhaus.superDuperMarkt.repo.ProductRepository;
 import com.brockhaus.superDuperMarkt.mapper.ProductMapper;
 import com.brockhaus.superDuperMarkt.model.DTO.ProductResponse;
@@ -6,8 +8,11 @@ import com.brockhaus.superDuperMarkt.model.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * @author amir
  * @version 0.1
@@ -26,42 +31,39 @@ public class ProductServiceImp implements IProductService {
 	}
 
 	@Override
-	public List<Product> findAllProductsInDB() {
-		return productRepository.findAll();
+	public List<ProductResponse> findAllProducts() {
+		return productMapper.convertToListOfProductResponse(productRepository.findAll(), LocalDate.now());
 	}
 
 	@Override
-	public List<Product> findAllProducts() {
-		return productRepository.findAll();
-	}
-
-	public List<ProductResponse> getExpiredProduct(){
+	public List<ProductResponse> getRemovableProduct(LocalDate targetDate) {
 		List<ProductResponse> listOfExpiredProductResponse = new ArrayList<>();
-		List <Product> 	listOfProducts = findAllProducts();
-		for (Product p: listOfProducts
+		List<Product> listOfProducts = productRepository.findAll();
+		for (Product p : listOfProducts
 		) {
-			if (p.hasExpired(p.getExpiryDay())){
-				ProductResponse productResponse = productMapper.convertToProductResponse(p);
+			if (p.hasExpired(p.getExpiryDay(), targetDate)) {
+				ProductResponse productResponse = productMapper.convertToProductResponse(p, targetDate);
 				listOfExpiredProductResponse.add(productResponse);
 			}
 		}
 		return listOfExpiredProductResponse;
 	}
 
-	public List <List<ProductResponse>> findAllProductsForNextWeek (){
-		List <List<ProductResponse>> listOfProductsForNextWeek = new ArrayList<>();
-		List <Product> 	listOfProducts = findAllProducts();
-		for (Product p: listOfProducts
-		) {
-			List<ProductResponse> listOfProductResponse = new ArrayList<>();
-			for (int i = 0; i < 100; i++) {
-				ProductResponse productResponse = productMapper.convertToProductResponse(p);
-				productResponse.setDailyPrice(p.getDailyPrice(p.getInitialPrice(), p.getQuality(p.getExpiryDay().minusDays(i), p.getImportDay())));
-				listOfProductResponse.add(productResponse);
-			}
-			listOfProductsForNextWeek.add(listOfProductResponse);
-		}
-		return listOfProductsForNextWeek;
-	}
+	@Override
+	public List<ProductReportDTO> findAllProductsForNextWeek() {
+		List<ProductReportDTO> listOfProductReportDTOS = new ArrayList<>();
+		List<Product> listOfProducts = productRepository.findAll();
 
+		for (Product p : listOfProducts
+		) {
+			ProductReportDTO productReportDTO = productMapper.convertToProductReportDTO(p);
+
+			for (int i = 1; i <= 7; i++) {
+				double d = p.getDailyPrice(p.getInitialPrice(), p.getQuality(p.getExpiryDay().minusDays(i), p.getImportDay()));
+				productReportDTO.getPrices().add(d);
+			}
+			listOfProductReportDTOS.add(productReportDTO);
+		}
+		return listOfProductReportDTOS;
+	}
 }

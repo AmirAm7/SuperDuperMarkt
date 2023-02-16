@@ -1,5 +1,7 @@
 package com.brockhaus.superDuperMarkt.model;
+
 import lombok.NoArgsConstructor;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,17 +13,23 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Table(name = "cheese")
 @DiscriminatorValue(value = "cheese")
 @NoArgsConstructor
-public class Cheese extends Product{
+public class Cheese extends Product {
 
-	public Cheese(String designation, double initialPrice, int expiryDate, LocalDate expiryDay, LocalDate importDay) {
-		super(designation, initialPrice, expiryDate, expiryDay, importDay);
-		if (expiryDate < 50 || expiryDate > 100) {
+	public Cheese(String designation, double initialPrice, LocalDate expiryDay, LocalDate importDay) {
+		super(designation, initialPrice, expiryDay, importDay);
+		int quality = getQuality(expiryDay, importDay);
+		if (quality < 50 || quality > 100) {
 			throw new RuntimeException("cheese expiry must be more than 30");
 		}
-		this.setExpiryDate(expiryDate);
 	}
 
-
+	/**
+	 * comment
+	 *
+	 * @param expiryDay
+	 * @param importDay
+	 * @return
+	 */
 	@Override
 	public int getQuality(LocalDate expiryDay, LocalDate importDay) {
 		LocalDate today = LocalDate.now();
@@ -32,10 +40,9 @@ public class Cheese extends Product{
 	}
 
 	@Override
-	public boolean hasExpired(LocalDate expiryDay) {
+	public boolean hasExpired(LocalDate expiryDay, LocalDate target) {
 		LocalDate timeToRemoveProductFromTheShelf = expiryDay.minusDays(30);
-		LocalDate today = LocalDate.now();
-		return today.isAfter(timeToRemoveProductFromTheShelf) || today.isEqual(timeToRemoveProductFromTheShelf);
+		return target.isEqual(timeToRemoveProductFromTheShelf) || target.isAfter(expiryDay);
 	}
 
 	@Override

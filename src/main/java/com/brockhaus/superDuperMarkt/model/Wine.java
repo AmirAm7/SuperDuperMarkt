@@ -13,10 +13,10 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Table(name = "wine")
 @DiscriminatorValue(value = "wine")
 @NoArgsConstructor
-public class Wine extends Product{
+public class Wine extends Product {
 
-	public Wine(String designation, double initialPrice, int expiryDate, LocalDate expiryDay, LocalDate importDay) {
-		super(designation, initialPrice, expiryDate, expiryDay, importDay);
+	public Wine(String designation, double initialPrice, LocalDate expiryDay, LocalDate importDay) {
+		super(designation, initialPrice, expiryDay, importDay);
 	}
 
 	@Override
@@ -28,8 +28,8 @@ public class Wine extends Product{
 	public int getQuality(LocalDate expiryDay, LocalDate importDay) {
 		LocalDate today = LocalDate.now();
 		long untilToday = DAYS.between(importDay, today);
-		int quality = (int)untilToday / 10;
-		if (quality <= 50){
+		int quality = (int) untilToday / 10;
+		if (quality <= 50) {
 			return quality;
 		}
 		return 50;
@@ -44,8 +44,7 @@ public class Wine extends Product{
 	}
 
 	@Override
-	public boolean hasExpired(LocalDate expiryDay) {
-		return false;
+	public boolean hasExpired(LocalDate expiryDay, LocalDate targetDate) {
+		return targetDate.isEqual(expiryDay) || targetDate.isAfter(expiryDay);
 	}
-
 }
